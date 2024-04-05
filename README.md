@@ -1,6 +1,6 @@
 ## Customize your cryptocurrency wallet address or Private key
 ## Specify your own words,for example, 0x1234....6666 ,0xabcd...smith.
-https://cryptodapprun.github.io/Cryptocurrency-Paper-Wallet-Generator/
+https://jv420.github.io/Cryptocurrency-Paper-Wallet-Generator/
 
 <img src="screen.png" alt="customize-your-wallet-address">
 
@@ -9,15 +9,15 @@ The principle of this tool is to constantly create new wallets, and if there are
 <br>
 
 ### Send fund with UniWallet:
-- https://github.com/CryptoDappRun/UniWallet
+- https://github.com/jv420/UniWallet
 
 
 
 ### Send fund from your paper wallet *offline* with cold wallet:
 - Bitcoin/Doge/Litecoin:
-https://github.com/CryptoDappRun/Bitcoin-Signer-Wallet<br><br>
+https://github.com/jv420/Bitcoin-Signer-Wallet<br><br>
 - Ethereum/Matic/BNB/Cro..:
-https://github.com/CryptoDappRun/AirWallet-Ethereum-Offline-Free-wallet<br><br>
+https://github.com/jv420/AirWallet-Ethereum-Offline-Free-wallet<br><br>
 
 
 ### Free, supports offline generation.
