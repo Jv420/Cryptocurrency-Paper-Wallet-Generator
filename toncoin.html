@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Dogecoin Paper Wallet Generator</title>
+<title>TonCoin Paper Wallet Generator</title>
 <meta name="description" content="A lightweight, client-side, reliable, fast, open-source universal paper wallet generator supporting almost every major cryptocurrency">
 <meta name="keywords" content="minimal, reliable, fast, universal, paper, wallet, generator, offline, doge, dogecoin, cryptocurrency">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,9 +24,6 @@
 <button onclick="generate(true);">Generate custom public address</button>
  
 <button onclick="generate(false);">Generate custom private address</button>
-
-<button  id="saveButton">Downlad</button>
-
 </div>
 <!---->
 
@@ -37,18 +34,24 @@
 
 
 <table>
-<tr><h1 id="titlePaper">Dogecoin Paper Wallet</h1></tr>
+<tr><h1 id="titlePaper">TonCoin Paper Wallet</h1></tr>
 <tr><th class="grayHeaders">Public Address <span id="shareColor">(SHARE)</span></th></tr>
 <tr><td><div id="public"> </div></td></tr>
 <tr><td><div id="public_qr"></div></td></tr>
-<tr><th class="grayHeaders"><div id="secretLabel">Private Key <span id="secretColor">(SECRET)</span></div></th></tr>
+<tr><th class="grayHeaders"><div id="secretLabel">Private Key <span id="secretColor">(HEX SECRET)</span></div></th></tr>
 <tr><td><div id="secret"> </div></td></tr>
 <tr><td><div id="secret_qr"></div></td></tr>
 </table>
 </div>
-<script src="js/bitcoinjs-lib.js"></script>
+<script src="js/tonweb.js"></script>
 <script src="js/qrcode.js"></script>
 <script>
+
+
+            const TonWeb = window.TonWeb;
+            const nacl = TonWeb.utils.nacl;
+
+
 async function generate(isPublic) {
 console.log("isPublic",isPublic );
 
@@ -60,9 +63,7 @@ const timer = ms => new Promise(res => setTimeout(res, ms))
 document.getElementById("public").textContent =   "Generating...";
 
 
-const doge = bitcoin.networks.bitcoin;
-doge.pubKeyHash = 0x1e; doge.wif = 0x9e; doge.scriptHash = 0x16;
-
+ 
 
 var keyPair  ;
 var pubKey  ;
@@ -82,10 +83,25 @@ do {
 
 var step;
 
-  keyPair = bitcoin.ECPair.makeRandom();
-  pubKey = keyPair.getAddress();
-  privKey = keyPair.toWIF();
- 
+
+keyPair = nacl.sign.keyPair();
+var  pubKeyHex = TonWeb.utils.bytesToHex(keyPair.publicKey);
+privKey = TonWeb.utils.bytesToHex(keyPair.secretKey);
+
+
+var tonweb = new TonWeb();
+
+const wallet = tonweb.wallet.create({
+publicKey: keyPair.publicKey,
+wc: 0  // Workchain ID, 0 is the default
+});
+
+// Get the wallet address
+//true, true, true    address start with E (Bounceable)
+//true, true, false   address start with U (not Bounce)
+pubKey = (await wallet.getAddress()).toString(true, true, false);
+
+
 
 if (isPublic) {
 LastString= pubKey.substr(pubKey.length - CustomString.length); 
@@ -118,40 +134,6 @@ document.getElementById("public_qr").textContent = "";
 document.getElementById("secret_qr").textContent = "";
 new QRCode(document.getElementById("public_qr"), {text: pubKey, width: 128, height: 128, correctLevel : QRCode.CorrectLevel.H});
 new QRCode(document.getElementById("secret_qr"), {text: privKey, width: 128, height: 128, correctLevel : QRCode.CorrectLevel.H});}
-
-
-
-  document.getElementById('saveButton').addEventListener('click', function() {
-
-      const PublicText = document.getElementById("public").innerText;
-  const SecretText = document.getElementById("secret").innerText;
-
-  let FinalText= PublicText + "\n" +SecretText
-
-    // Get the value from the textarea
-   // const text = document.getElementById('textInput').value;
-
-    // Create a Blob from the text
-    const blob = new Blob([FinalText], { type: 'text/plain' });
-
-    // Create a link element
-    const link = document.createElement('a');
-
-    // Create a URL for the Blob and set it as the href attribute of the link
-    link.href = URL.createObjectURL(blob);
-    
-    // Set the download attribute with a filename
-    link.download = 'myfile.txt';
-
-    // Append the link to the document (not necessary to make it visible)
-    document.body.appendChild(link);
-    
-    // Programmatically click the link to trigger the download
-    link.click();
-    
-    // Remove the link from the document
-    document.body.removeChild(link);
-});
 
 
 
